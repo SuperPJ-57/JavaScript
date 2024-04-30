@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Calculator</title>
+    <style>
+        * {
+            box-sizing: content-box;
+        }
+
+        .calculator {
+            background-color: black;
+            border: 1px solid black;
+            border-radius: 3px;
+            max-width: 260px;
+        }
+
+        .calculator input {
+            border: none;
+            background: black;
+            color: white;
+            text-align: right;
+            
+
+            max-width: 97%;
+            padding-top: 2px;
+
+        }
+
+        #display1 {
+            height: 35px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            direction: rtl;
+            
+        }
+
+        #display2 {
+            width: 400px;
+            height: 20px;
+            font-size: 1rem;
+            text-align: right;
+            direction: ltr;
+
+
+        }
+
+        input:focus {
+            outline: none;
+
+        }
+
+        .buttons {
+            margin-top: 10px;
+        }
+
+        .calculator button {
+            color: white;
+            background-color: rgb(59, 59, 59);
+            width: 50px;
+            height: 50px;
+            padding: 5px;
+            vertical-align: middle;
+            font-size: 1rem;
+            border-radius: 5px;
+            border: none;
+        }
+
+        .calculator button:hover {
+            background-color: rgb(50, 50, 50);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="calculator">
+        <input type="text" id="display2" readonly><br>
+        <input type="text" id="display1" value="0" readonly><br>
+        <div class="buttons">
+            <table>
+                <tr>
+                    <td>
+                        <button id="square">x<sup>2</sup></button>
+
+                        <button id="c">C</button>
+                        <button id="div">&divide;</button>
+                        <button id="bs">&larr;</button>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <button id="7">7</button>
+                        <button id="8">8</button>
+                        <button id="9">9</button>
+                        <button id="mul">X</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <button id="4">4</button>
+                        <button id="5">5</button>
+                        <button id="6">6</button>
+                        <button id="sub">-</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <button id="1">1</button>
+                        <button id="2">2</button>
+                        <button id="3">3</button>
+                        <button id="add">+</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <button id="signchange">+/-</button>
+                        <button id="0">0</button>
+                        <button id="dot">.</button>
+                        <button id="equal">=</button>
+                    </td>
+                </tr>
+            </table>
+
+
+
+
+        </div>
+    </div>
+    <script>
+        let rewrite = false;
+        let equalflag = false;
+        let operation = '';
+        let dis2 = '';
+        let num1 = 0;
+        let num2 = 0;
+        let operations = {
+            'add':'+',
+            'sub':'-',
+            'mul':'x',
+            'div':'/'
+        }
+
+        var display1 = document.getElementById('display1');
+        var display2 = document.getElementById('display2');
+
+        document.addEventListener('keydown', function (event) {
+            console.log('Key pressed:', event.key);
+            let digitPattern = /[0-9\+\-*\/=]+/;
+            let key = event.key;
+
+
+        });
+        var buttonsArray = [];
+        for (let i = 0; i <= 9; i++) {
+
+            buttonsArray.push(document.getElementById(i));
+        }
+        for (let i = 0; i <= 9; i++) {
+            buttonsArray[i].addEventListener('click', function () {
+                if (rewrite) {
+                    display1.value = i;
+                    rewrite = false;
+                    equalflag = false;
+                }
+                else {
+
+                    display1.value = (display1.value != '0') ? display1.value + i : i;
+                    equalflag = false;
+                }
+            })
+        }
+        document.getElementById('add').addEventListener('click', function () {
+            num1 = Number(display1.value);
+            operation = 'add';
+            dis2 = num1 + '+';
+            display2.value = dis2;
+            rewrite = true;
+        })
+        document.getElementById('sub').addEventListener('click', function () {
+            num1 = Number(display1.value);
+            operation = 'sub';
+            dis2 = num1 + '-';
+            display2.value = dis2;
+            rewrite = true;
+        })
+        document.getElementById('mul').addEventListener('click', function () {
+            num1 = Number(display1.value);
+            operation = 'mul';
+            dis2 = num1 + 'x';
+            display2.value = dis2;
+            rewrite = true;
+        })
+        document.getElementById('mul').addEventListener('click', function () {
+            num1 = Number(display1.value);
+            operation = 'sub';
+            dis2 = num1 + '-';
+            display2.value = dis2;
+            rewrite = true;
+        })
+
+        document.getElementById('equal').addEventListener('click', function () {
+            if (!equalflag) {
+
+                num2 = Number(display1.value);
+                rewrite = true;
+                dis2 = dis2 + num2 + '=';
+                display2.value = dis2;
+                equalflag = true;
+                calculate();
+            }
+        })
+        function calculate() {
+            let result = 0;
+            switch (operation) {
+                case 'add':
+                    console.log(num1 +" "+ num2);
+                    result = num1 + num2;
+                    break;
+
+                    case 'sub':
+                    console.log(num1 - num2);
+                    result = num1 - num2;
+                    break;
+
+                    case 'mul':
+                        result = num1 * num2;
+                        break;
+            }
+            if(result<0)
+            {
+                display1.style.direction='ltr';
+                display1.value = result;
+            }
+            else{
+                display1.value = result;
+            }
+        }
+
+    </script>
+</body>
+
+</html>
