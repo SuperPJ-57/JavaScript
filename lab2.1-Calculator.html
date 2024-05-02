@@ -20,7 +20,7 @@
             background: black;
             color: white;
             text-align: right;
-            
+
 
             max-width: 97%;
             padding-top: 2px;
@@ -32,7 +32,7 @@
             font-size: 1.3rem;
             font-weight: bold;
             direction: rtl;
-            
+
         }
 
         #display2 {
@@ -115,7 +115,7 @@
                 </tr>
                 <tr>
                     <td>
-                        <button id="signchange">+/-</button>
+                        <button id="negate">+/-</button>
                         <button id="0">0</button>
                         <button id="dot">.</button>
                         <button id="equal">=</button>
@@ -131,16 +131,12 @@
     <script>
         let rewrite = false;
         let equalflag = false;
+        let backspace = false;
         let operation = '';
         let dis2 = '';
         let num1 = 0;
         let num2 = 0;
-        let operations = {
-            'add':'+',
-            'sub':'-',
-            'mul':'x',
-            'div':'/'
-        }
+
 
         var display1 = document.getElementById('display1');
         var display2 = document.getElementById('display2');
@@ -163,6 +159,7 @@
                     display1.value = i;
                     rewrite = false;
                     equalflag = false;
+                    backspace = true;
                 }
                 else {
 
@@ -171,6 +168,20 @@
                 }
             })
         }
+        document.getElementById('dot').addEventListener('click',function(){
+            display1.style.direction = 'ltr';
+            if(rewrite){
+                display1.value = '0.';
+                rewrite = false;
+                equalflag = false;
+                backspace = true;
+            }
+            else{
+                if(!/[.]{1}/.test(display1.value))
+                    display1.value = display1.value+'.';
+            }
+        })
+
         document.getElementById('add').addEventListener('click', function () {
             num1 = Number(display1.value);
             operation = 'add';
@@ -192,21 +203,58 @@
             display2.value = dis2;
             rewrite = true;
         })
-        document.getElementById('mul').addEventListener('click', function () {
+        document.getElementById('div').addEventListener('click', function () {
             num1 = Number(display1.value);
-            operation = 'sub';
-            dis2 = num1 + '-';
+            operation = 'div';
+            dis2 = num1 + String.fromCharCode(247);
             display2.value = dis2;
             rewrite = true;
         })
+        document.getElementById('square').addEventListener('click', function () {
+            num1 = Number(display1.value);
+            operation = 'square';
+            dis2 = 'sqr(' + num1 + ')';
+            display2.value = dis2;
+            rewrite = true;
+            equalflag = true;
+            backspace = false;
+            calculate();
+        })
+        document.getElementById('negate').addEventListener('click', function () {
+            num1 = Number(display1.value);
+            operation = 'negate';
+            equalflag = true;
+            rewrite = true;
+            calculate();
+        })
+        document.getElementById('c').addEventListener('click', function () {
+            rewrite = true;
+            equalflag = true;
+            backspace = false;
+            operation = '';
+            display2.value = '';
+            dis2 = '';
+            display1.value = '0';
+            num1 = 0;
+            num2 = 0;
+        })
+        document.getElementById('bs').addEventListener('click', function () {
+            if (backspace) {
+                let value = display1.value;
+                display1.value = ((value.length - 1) == 0) ? '0' : value.substring(0, value.length - 1);
+
+            }
+
+        })
 
         document.getElementById('equal').addEventListener('click', function () {
-            if (!equalflag) {
-
+            if (!equalflag && display2.value[display2.value.length-1]!='=') {
+                console.log('here and '+display1.value);
                 num2 = Number(display1.value);
-                rewrite = true;
                 dis2 = dis2 + num2 + '=';
                 display2.value = dis2;
+                rewrite = true;
+                backspace = false;
                 equalflag = true;
                 calculate();
             }
@@ -215,25 +263,38 @@
             let result = 0;
             switch (operation) {
                 case 'add':
-                    console.log(num1 +" "+ num2);
+                    console.log(num1 + " " + num2);
                     result = num1 + num2;
                     break;
 
-                    case 'sub':
+                case 'sub':
                     console.log(num1 - num2);
                     result = num1 - num2;
                     break;
 
-                    case 'mul':
-                        result = num1 * num2;
-                        break;
+                case 'mul':
+                    result = num1 * num2;
+                    break;
+                case 'div':
+                    result = (num2 == 0) ? "Cannot divide by Zero" : num1 / num2;
+                    break;
+                case 'square':
+                    result = Math.pow(num1, 2);
+                    break;
+                case 'negate':
+                    result = num1 * -1;
+                    break;
+                default:
+                    result = num2;
+                    console.log(num2);
+                    break;
+
             }
-            if(result<0)
-            {
-                display1.style.direction='ltr';
+            if (result < 0) {
+                display1.style.direction = 'ltr';
                 display1.value = result;
             }
-            else{
+            else {
                 display1.value = result;
             }
         }
